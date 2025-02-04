@@ -7,7 +7,6 @@ services:
       - ./app:/code/app
     ports:
       - "8000:8000"
-    restart: always
     runtime: nvidia   # This line was added
     environment:
       - NVIDIA_VISIBLE_DEVICES=all   # This line was added
