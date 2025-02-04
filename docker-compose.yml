@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  ac-app-1:
+    container_name: ac-app-1
+    build: .
+    image: screen-recorder:latest
+    volumes:
+      - ./app:/app
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["Xvfb :99 & export DISPLAY=:99 && python3 main.py"]
