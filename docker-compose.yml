@@ -2,9 +2,9 @@ services:
   ac-app-2:
     container_name: ac-app-2
     build: .
-    working_dir: /code/app
+    working_dir: /usr/src/app
     volumes:
-      - ./app:/code/app
+      - ./app:/usr/src/app
     ports:
       - "8000:8000"
     runtime: nvidia   # This line was added
