@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import time
 from pyvirtualdisplay import Display
-import tensorflow as tf
 import queue
 import threading
 
@@ -11,7 +10,10 @@ from playwright.sync_api import sync_playwright
 
 def write_combined_frames(output_q, background_cap, end_event):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter('result/output.mp4', fourcc, 20.0, (1280, 720))
+    out = cv2.VideoWriter('result/output_combined.mp4', fourcc, 20.0, (1280, 720))
+    out1 = cv2.VideoWriter('result/output_back.mp4', fourcc, 20.0, (1280, 720))
+    out2 = cv2.VideoWriter('result/output2_screen.mp4', fourcc, 20.0, (1280, 720))
+    out3 = cv2.VideoWriter('result/output2_screen_black.mp4', fourcc, 20.0, (1280, 720))
     total_frames = int(background_cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     for _ in range(total_frames):
@@ -29,6 +31,18 @@ def write_combined_frames(output_q, background_cap, end_event):
 
                 combined_frame = cv2.addWeighted(background_frame, 0.5, frame, 0.5, 0)
                 out.write(combined_frame)
+
+                out1.write(background_frame)
+                out2.write(frame)
+
+                black_background = np.zeros_like(frame)
+
+                # Combine the frame and the black background.
+                black_background_frame = cv2.addWeighted(black_background, 0.5, frame, 0.5, 0)
+
+                # Write the combined frame to the video.
+                out3.write(black_background_frame)
+
             else:
                 print("Failed to read frame from background_cap")
                 end_event.set()
@@ -37,6 +51,8 @@ def write_combined_frames(output_q, background_cap, end_event):
             continue
 
     out.release()
+    out1.release()
+    out2.release()
 
 
 def main():
